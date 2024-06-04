@@ -2934,18 +2934,18 @@ impl ReplayStage {
                 if bank.collector_id() != my_pubkey {
                     // If the block does not have at least DATA_SHREDS_PER_FEC_BLOCK shreds in the last FEC set,
                     // mark it dead. No reason to perform this check on our leader block.
-                    if !blockstore
+                    let is_last_fec_set_full = blockstore
                         .is_last_fec_set_full(bank.slot())
-                        .inspect_err(|e| {
+                        .unwrap_or_else(|e| {
                             warn!(
                                 "Unable to determine if last fec set is full for slot {} {},
                                 marking as dead: {e:?}",
                                 bank.slot(),
                                 bank.hash()
-                            )
-                        })
-                        .unwrap_or(false)
-                    {
+                            );
+                            false
+                        });
+                    if !is_last_fec_set_full {
                         // Update metric regardless of feature flag
                         datapoint_warn!(
                             "incomplete_final_fec_set",
@@ -3203,7 +3203,6 @@ impl ReplayStage {
                     .collect()
             };
 
-<<<<<<< HEAD
             Self::process_replay_results(
                 blockstore,
                 bank_forks,
@@ -3226,36 +3225,11 @@ impl ReplayStage {
                 block_metadata_notifier,
                 &replay_result_vec,
                 purge_repair_slot_counter,
+                my_pubkey,
             )
         } else {
             false
         }
-=======
-        Self::process_replay_results(
-            blockstore,
-            bank_forks,
-            progress,
-            transaction_status_sender,
-            cache_block_meta_sender,
-            heaviest_subtree_fork_choice,
-            bank_notification_sender,
-            rewards_recorder_sender,
-            rpc_subscriptions,
-            duplicate_slots_tracker,
-            duplicate_confirmed_slots,
-            epoch_slots_frozen_slots,
-            unfrozen_gossip_verified_vote_hashes,
-            latest_validator_votes_for_frozen_banks,
-            cluster_slots_update_sender,
-            cost_update_sender,
-            duplicate_slots_to_repair,
-            ancestor_hashes_replay_update_sender,
-            block_metadata_notifier,
-            &replay_result_vec,
-            purge_repair_slot_counter,
-            my_pubkey,
-        )
->>>>>>> 8c67696346 (replay: only vote on blocks with >= 32 data shreds in last fec set (#1002))
     }
 
     #[allow(clippy::too_many_arguments)]

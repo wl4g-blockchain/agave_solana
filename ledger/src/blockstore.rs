@@ -28,6 +28,7 @@ use {
     bincode::{deserialize, serialize},
     crossbeam_channel::{bounded, Receiver, Sender, TrySendError},
     dashmap::DashSet,
+    itertools::Itertools,
     log::*,
     rand::Rng,
     rayon::{
@@ -3717,7 +3718,9 @@ impl Blockstore {
             warn!("Slot {slot} has only {} shreds, fewer than the {DATA_SHREDS_PER_FEC_BLOCK} required", last_shred_index + 1);
             return Ok(false);
         };
-        let keys = (start_index..=last_shred_index).map(|index| (slot, index));
+        let keys = (start_index..=last_shred_index)
+            .map(|index| (slot, index))
+            .collect();
 
         let last_merkle_roots: Vec<Hash> = self
             .data_shred_cf
