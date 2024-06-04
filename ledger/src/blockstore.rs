@@ -1945,26 +1945,6 @@ impl Blockstore {
             return true;
         };
 
-<<<<<<< HEAD
-        let Some(prev_merkle_root_meta) = merkle_root_metas
-            .get(&prev_erasure_set)
-            .map(WorkingEntry::as_ref)
-            .map(Cow::Borrowed)
-            .or_else(|| {
-                self.merkle_root_meta(prev_erasure_set)
-                    .unwrap()
-                    .map(Cow::Owned)
-            })
-        else {
-            warn!(
-                "The merkle root meta for the previous erasure set {prev_erasure_set:?} does not exist.
-                This should only happen if you have recently upgraded from a version < v1.18.13.
-                Skipping the backwards chained merkle root for {erasure_set:?}"
-            );
-            return true;
-        };
-=======
->>>>>>> ecb491c392 (blockstore: always send a coding shred for chained merkle root conflicts (#1353))
         let prev_shred_id = ShredId::new(
             slot,
             prev_erasure_meta
@@ -1976,16 +1956,10 @@ impl Blockstore {
             Self::get_shred_from_just_inserted_or_db(self, just_inserted_shreds, prev_shred_id)
                 .map(Cow::into_owned)
         else {
-<<<<<<< HEAD
-            error!(
-                "Shred {prev_shred_id:?} indicated by merkle root meta {prev_merkle_root_meta:?} is missing from blockstore.
-                 This should only happen in extreme cases where blockstore cleanup has caught up to the root.
-=======
             warn!(
                 "Shred {prev_shred_id:?} indicated by the erasure meta {prev_erasure_meta:?} \
                  is missing from blockstore. This can happen if you have recently upgraded \
                  from a version < v1.18.13, or if blockstore cleanup has caught up to the root. \
->>>>>>> ecb491c392 (blockstore: always send a coding shred for chained merkle root conflicts (#1353))
                  Skipping the backwards chained merkle root consistency check"
             );
             return true;
@@ -1995,23 +1969,12 @@ impl Blockstore {
 
         if !self.check_chaining(merkle_root, chained_merkle_root) {
             warn!(
-<<<<<<< HEAD
-                    "Received conflicting chained merkle roots for slot: {slot},
-                    shred {:?} type {:?} chains to merkle root {chained_merkle_root:?}, however
-                    previous fec set shred {prev_erasure_set:?} type {:?} has merkle root {merkle_root:?}.
-                    Reporting as duplicate",
-                    shred.erasure_set(),
-                    shred.shred_type(),
-                    prev_merkle_root_meta.first_received_shred_type(),
-                );
-=======
                 "Received conflicting chained merkle roots for slot: {slot}, shred {:?} type {:?} \
                  chains to merkle root {chained_merkle_root:?}, however previous fec set coding \
                  shred {prev_erasure_set:?} has merkle root {merkle_root:?}. Reporting as duplicate",
                 shred.erasure_set(),
                 shred.shred_type(),
             );
->>>>>>> ecb491c392 (blockstore: always send a coding shred for chained merkle root conflicts (#1353))
 
             if !self.has_duplicate_shreds_in_slot(shred.slot()) {
                 duplicate_shreds.push(PossibleDuplicateShred::ChainedMerkleRootConflict(
