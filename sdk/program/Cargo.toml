@@ -25,7 +25,11 @@ log = { workspace = true }
 memoffset = { workspace = true }
 num-derive = { workspace = true }
 num-traits = { workspace = true, features = ["i128"] }
+<<<<<<< HEAD
 rustversion = { workspace = true }
+=======
+qualifier_attr = { workspace = true, optional = true }
+>>>>>>> adb9d9e3c9 (Handle deprecated Instructions sysvar methods (#1959))
 serde = { workspace = true }
 serde_bytes = { workspace = true }
 serde_derive = { workspace = true }
@@ -92,4 +96,5 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["borsh"]
 borsh = ["dep:borsh", "dep:borsh0-10"]
+dev-context-only-utils = ["dep:qualifier_attr"]
 frozen-abi = ["dep:solana-frozen-abi", "dep:solana-frozen-abi-macro"]
