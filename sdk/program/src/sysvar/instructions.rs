@@ -29,7 +29,6 @@
 
 #![allow(clippy::arithmetic_side_effects)]
 
-<<<<<<< HEAD
 use crate::{
     account_info::AccountInfo,
     instruction::{AccountMeta, Instruction},
@@ -38,10 +37,8 @@ use crate::{
     sanitize::SanitizeError,
     serialize_utils::{read_pubkey, read_slice, read_u16, read_u8},
 };
-=======
 #[cfg(feature = "dev-context-only-utils")]
 use qualifier_attr::qualifiers;
->>>>>>> adb9d9e3c9 (Handle deprecated Instructions sysvar methods (#1959))
 #[cfg(not(target_os = "solana"))]
 use {
     crate::serialize_utils::{append_slice, append_u16, append_u8},
